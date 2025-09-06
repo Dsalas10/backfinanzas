@@ -1,14 +1,14 @@
 
-const Usuario=requiere('./../Models/model.user');
+const UsuarioModelo=require("../Models/model.user")
 
 async function registrarUsuario(nombre,email,password){
 
     try{
-        const existe=await Usuario.findOne({email});
+        const existe=await UsuarioModelo.findOne({email});
         if(existe){
             throw new Error('El email ya está registrado');
         }
-        const nuevoUsuario=new Usuario({nombre,email,password});
+        const nuevoUsuario=new UsuarioModelo({nombre,email,password});
         await nuevoUsuario.save();
         return {mensaje:'Usuario registrado exitosamente'};
     }catch(error){
@@ -19,7 +19,7 @@ async function registrarUsuario(nombre,email,password){
 
 async function cambiarPassword(email,passwordActual,passwordNueva){
     try{
-        const usuario=await Usuario.findOne({email});
+        const usuario=await UsuarioModelo.findOne({email});
         if(!usuario){
             throw new Error('Usuario no encontrado');
         }
@@ -38,7 +38,7 @@ async function cambiarPassword(email,passwordActual,passwordNueva){
 
 async function loginUsuario(email,password){
     try{
-        const existe=await Usuario.findOne({email,password})
+        const existe=await UsuarioModelo.findOne({email,password})
         if(!existe){
             throw new Error("Email o Pass Incorrectos")
         }

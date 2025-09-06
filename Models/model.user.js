@@ -5,7 +5,6 @@ const usuarioSchema = new mongoose.Schema({
   nombre: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
-  creadoEn: { type: Date, default: Date.now },
 });
 
 
@@ -27,12 +26,12 @@ usuarioSchema.methods.compararPassword=async function(password2) {
 
 
 
-// Método para validar contraseña
-userSchema.methods.validatePassword = function(password) {
-  return bcrypt.compare(password, this.passwordHash);
-};
+// // Método para validar contraseña
+// usuarioSchema.methods.validatePassword = function(password) {
+//   return bcrypt.compare(password, this.passwordHash);
+// };
 
 
 
-const User = mongoose.model('Usuario', userSchema);
-module.exports = User;
+const UsuarioModelo = mongoose.model('Usuario', usuarioSchema);
+module.exports = UsuarioModelo;

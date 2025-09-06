@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 
 const prestamosRouter = require("./Routes/prestamos.route");
+const loginRouter = require("./Routes/Login.route");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +19,8 @@ app.use(express.json());
 
 app.use("/api/prestamos", prestamosRouter);
 app.use("/api/gastos", require("./Routes/gastos.route"));
+app.use("/api/", loginRouter);
+app.use("/api/usuarios", require("./Routes/usuarios.route"));
 
 app.get("/", (req, res) => {
   res.send("API is running...");

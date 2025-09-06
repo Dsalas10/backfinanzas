@@ -26,3 +26,25 @@ Content-Type: application/json
   "fecha": "2024-07-01",
   "monto": 50
 }
+
+### Crear un nuevo usuario
+POST http://localhost:5000/api/usuarios/registrar
+Content-Type: application/json
+
+{
+  "nombre": "Usuario1",
+  "email": "usuario@prueba.com",
+  "password": "contraseña123"
+}
+
+### Crear un nuevo gasto
+POST http://localhost:5000/api/gastos/nuevoGasto
+Content-Type: application/json
+
+{
+  "fecha": "2024-07-01",
+  "concepto": "Comida",
+  "monto": 50,
+  "usuarioId": "68bb90c3527e1975f559154b"
+}
+
