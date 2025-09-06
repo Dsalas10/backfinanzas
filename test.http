@@ -1,0 +1,28 @@
+### Obtener todos los préstamos
+GET http://localhost:5000/api/prestamos
+Accept: application/json    
+
+
+### Crear un nuevo préstamo
+POST http://localhost:5000/api/prestamos
+Content-Type: application/json
+
+{
+  "nombre": "Préstamo de prueba2",
+  "fecha": "2024-07-01",
+  "monto": 1500
+}
+### obtener todos los gastos
+GET http://localhost:5000/api/gastos
+Accept: application/json
+
+### Crear un nuevo gasto
+POST http://localhost:5000/api/gastos
+Content-Type: application/json
+
+{
+  "descripcion": "Gasto de prueba",
+  "nombre": "Comida",
+  "fecha": "2024-07-01",
+  "monto": 50
+}
