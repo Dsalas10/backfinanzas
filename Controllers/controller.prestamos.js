@@ -28,3 +28,4 @@ async function crearPrestamo(datos) {
     return { mensaje: "Error al crear el prestamo", error: error.message };
   }
 }
+

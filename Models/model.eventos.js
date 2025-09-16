@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const eventoSchema = new Schema({
-  fecha: { type: Date, required: true },
+  fecha: { type: String, required: true },
   incluirReciboEnVenta: { type: Boolean, default: false },
   contarReciboComoPago: { type: Boolean, default: false },
   pagoRecibo: { type: Number, default: 0 },

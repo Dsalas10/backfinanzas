@@ -18,9 +18,12 @@ app.use(express.json());
 // Importa la conexión a la base de datos
 
 app.use("/api/prestamos", prestamosRouter);
-app.use("/api/gastos", require("./Routes/gastos.route"));
+app.use("/api/", require("./Routes/gastos.route"));
 app.use("/api/", loginRouter);
 app.use("/api/usuarios", require("./Routes/usuarios.route"));
+app.use("/api/eventos", require("./Routes/eventos.route"));
+
+// Ruta de prueba
 
 app.get("/", (req, res) => {
   res.send("API is running...");

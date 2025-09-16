@@ -1,40 +1,20 @@
-### Obtener todos los préstamos
-GET http://localhost:5000/api/prestamos
-Accept: application/json    
-
-
-### Crear un nuevo préstamo
-POST http://localhost:5000/api/prestamos
-Content-Type: application/json
-
-{
-  "nombre": "Préstamo de prueba2",
-  "fecha": "2024-07-01",
-  "monto": 1500
-}
-### obtener todos los gastos
-GET http://localhost:5000/api/gastos
-Accept: application/json
-
-### Crear un nuevo gasto
-POST http://localhost:5000/api/gastos
-Content-Type: application/json
-
-{
-  "descripcion": "Gasto de prueba",
-  "nombre": "Comida",
-  "fecha": "2024-07-01",
-  "monto": 50
-}
 
 ### Crear un nuevo usuario
 POST http://localhost:5000/api/usuarios/registrar
 Content-Type: application/json
 
 {
-  "nombre": "Usuario1",
-  "email": "usuario@prueba.com",
-  "password": "contraseña123"
+  "nombre": "Usuario2",
+  "email": "usuario2@prueba.com",
+  "password": "Usuario123"
+}
+### Iniciar sesión
+POST http://localhost:5000/api/login
+Content-Type: application/json
+
+{
+  "username": "Usuario2",
+  "password": "Usuario123"
 }
 
 ### Crear un nuevo gasto
@@ -47,4 +27,38 @@ Content-Type: application/json
   "monto": 50,
   "usuarioId": "68bb90c3527e1975f559154b"
 }
+### Obtener gastos del mes actual para un usuario
+GET http://localhost:5000/api/gastos/68bf799928ea61737b894518
+Accept: application/json
+
+### Eliminar un gasto
+DELETE http://localhost:5000/api/gastos/eliminar
+Content-Type: application/json
+
+{
+  "usuarioId": "68bf799928ea61737b894518",
+  "gastoId": "68bf96c16b6f835db322734a"
+}
+####eventos
+### crear evento
+POST http://localhost:5000/api/eventos/nuevoEvento
+Content-Type: application/json
+
+{
+  "fecha":"2025-09-15",
+  "incluirReciboEnVenta":false ,
+  "contarReciboComoPago":false ,
+  "pagoRecibo": 0,
+  "pagoQR": 2000 ,
+  "pagoBaucher": 2000 ,
+  "pagoEfectivo":2000 ,
+  "montoSistema": 6000,
+  "propina": 200 ,
+  "gananciaPorcentaje": 300 ,
+  "gananciaGeneral": 300 ,
+  "usuario":"68bf799928ea61737b894518"
+}
+### traer datos del mes actual
+GET http://localhost:5000/api/eventos/68bf799928ea61737b894518
+Accept: application/json
 

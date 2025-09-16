@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
-const validarCampos  = require("../MiddleWares/ValidarCampos");
+const validarCampos = require("../MiddleWares/ValidarCampos");
 const {
   crearGasto,
   obtenerGastosMesActual,
@@ -10,30 +10,42 @@ const {
 } = require("../Controllers/controller.gastos");
 
 const reglasGasto = {
-  fechaa: [
+  fecha: [
     body("fecha")
       .notEmpty()
       .withMessage("Fecha obligatoria")
       .isISO8601()
       .withMessage("Fecha inválida"),
   ],
-  concepto: [body("concepto").notEmpty().withMessage("Concepto obligatorio")],
   monto: [
     body("monto")
       .notEmpty()
       .withMessage("Monto obligatorio")
       .isFloat({ gt: 0 }),
   ],
+  concepto: [body("concepto").notEmpty().withMessage("Concepto obligatorio")],
   usuarioId: [body("usuarioId").notEmpty().isMongoId()],
 };
 
-let gastos = [
-  { id: 1, nombre: "Gasto 1", fecha: "2024-06-02", monto: 150 },
-  { id: 2, nombre: "Gasto 2", fecha: "2024-06-18", monto: 300 },
-];
 
-router.get("/", (req, res) => {
-  res.json(gastos);
+//gastos del mes actual 
+router.get("/gastos/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    if(!userId.match(/^[0-9a-fA-F]{24}$/)){
+      return res.status(400).json({ mensaje: "ID de usuario inválido" });
+    }
+    const resultado = await obtenerGastosMesActual(userId);
+    if (resultado.mensaje && resultado.mensaje === 'Usuario no encontrado') {
+      return res.status(404).json({ mensaje: resultado.mensaje });
+    }
+    if (resultado.error) {
+      return res.status(500).json({ mensaje: resultado.mensaje, error: resultado.error });
+    }
+    return res.status(200).json({ mensaje: "datos encontrados",  gastos:resultado });
+  } catch (error) {
+    return res.status(500).json({ mensaje: "Error al obtener gastos", error: error.message });
+  }
 });
 
 router.post("/nuevoGasto", validarCampos(reglasGasto), async (req, res) => {
@@ -46,10 +58,10 @@ router.post("/nuevoGasto", validarCampos(reglasGasto), async (req, res) => {
     if (resultado.error)
       return res
         .status(500)
-        .json({ mensaje: resultado.mensaje, error: resultado.error });
+        .json({ mensaje: "error al Registrar El Gasto", error: resultado.error });
     res
       .status(201)
-      .json({ mensaje: resultado.mensaje, gasto: resultado.gasto });
+      .json({ mensaje:"Gasto Creado Exictosamente", gasto: resultado });
   } catch (error) {
     res
       .status(500)
@@ -57,10 +69,21 @@ router.post("/nuevoGasto", validarCampos(reglasGasto), async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  gastos = gastos.filter((gasto) => gasto.id !== parseInt(id));
-  res.status(204).json({ message: "gasto eliminado" });
+
+router.delete("/gastos/eliminar", async (req, res) => {
+  const{usuarioId,gastoId}=req.body
+  if (!usuarioId) {
+    return res.status(400).json({ mensaje: 'Falta el usuarioId para validar la eliminación' });
+  }
+  try {
+    const resultado = await eliminarGasto(usuarioId, gastoId);
+    if (resultado.mensaje === "Gasto eliminado exitosamente") {
+      return res.status(200).json({ mensaje: resultado.mensaje });
+    }
+    return res.status(404).json({ mensaje: resultado.mensaje });
+  } catch (error) {
+    return res.status(500).json({ mensaje: "Error al eliminar el gasto", error: error.message });
+  }
 });
 
 module.exports = router;

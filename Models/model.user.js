@@ -20,16 +20,16 @@ usuarioSchema.pre('save', async function(next) {
   }
 });
 
-usuarioSchema.methods.compararPassword=async function(password2) {
-  return bcrypt.compare(password2, this.password);
+usuarioSchema.methods.compararPassword=async function(passwordPlano) {
+  return  await bcrypt.compare(passwordPlano, this.password);
 }
 
 
 
-// // Método para validar contraseña
-// usuarioSchema.methods.validatePassword = function(password) {
-//   return bcrypt.compare(password, this.passwordHash);
-// };
+// Método para validar contraseña
+usuarioSchema.methods.validatePassword = async function(passHash) {
+  return await bcrypt.compare(passHash, this.password);
+};
 
 
 
