@@ -11,9 +11,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://gestorfinanzas-dsalas10-daniels-projects-e5cb67ed.vercel.app",
+  })
+);
 app.use(express.json());
-
 
 // Importa la conexión a la base de datos
 
