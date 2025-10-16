@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use("/api/prestamo", prestamosRouter);
 app.use("/api/", require("./Routes/gastos.route"));
-app.use("/api/", loginRouter);
+app.use("/api", loginRouter);
 app.use("/api/usuarios", require("./Routes/usuarios.route"));
 app.use("/api/eventos", require("./Routes/eventos.route"));
 

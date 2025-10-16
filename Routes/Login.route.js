@@ -5,6 +5,7 @@ const {
 } = require("./../Controllers/controller.usuario");
 
 router.post("/login", async (req, res) => {
+  console.log('Solicitud recibida:', req.body);
   try {
     const { username, password } = req.body;
     if(!username || !password){
@@ -15,9 +16,9 @@ router.post("/login", async (req, res) => {
     if(resultado.error){
       return res.status(400).json({error:resultado.error})
     }
-    return res.status(200).json(resultado);
+    return res.status(200).json({mensaje:"login success",resultado});
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({mensaje:"invalid credentials", error: error.message });
   }
 });
 
