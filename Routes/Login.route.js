@@ -12,7 +12,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({error:"Nombre y contraseña son obligatorios"})
     }
     const nombre=username
-    const resultado = await loginUsuario(nombre, password);
+    const resultado = await loginUsuario(nombre);
+
     if(resultado.error){
       return res.status(400).json({error:resultado.error})
     }
