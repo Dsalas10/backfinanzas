@@ -5,7 +5,7 @@ const validarCampos = require("../MiddleWares/ValidarCampos");
 const {
   crearGasto,
   obtenerGastosMesActual,
-  actualizarGasto,
+  obtenerGastossMesSeleccionado,
   eliminarGasto,
 } = require("../Controllers/controller.gastos");
 
@@ -83,6 +83,24 @@ router.delete("/gastos/eliminar", async (req, res) => {
     return res.status(404).json({ mensaje: resultado.mensaje });
   } catch (error) {
     return res.status(500).json({ mensaje: "Error al eliminar el gasto", error: error.message });
+  }
+});
+
+router.get("/gastos/:userId/:meseleccionado", async (req, res) => {
+  const { userId, meseleccionado } = req.params;
+  try { 
+    if(!userId.match(/^[0-9a-fA-F]{24}$/)){
+      return res.status(400).json({ mensaje: "ID de usuario inválido" });
+    }
+    const resultado = await obtenerGastossMesSeleccionado(
+      userId,
+      parseInt(meseleccionado)
+    );
+    return res.json(resultado);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ mensaje: "Error al obtener los gastos", error: error.message });
   }
 });
 

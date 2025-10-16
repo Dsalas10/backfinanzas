@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Importa la conexión a la base de datos
 
-app.use("/api/prestamos", prestamosRouter);
+app.use("/api/prestamo", prestamosRouter);
 app.use("/api/", require("./Routes/gastos.route"));
 app.use("/api/", loginRouter);
 app.use("/api/usuarios", require("./Routes/usuarios.route"));

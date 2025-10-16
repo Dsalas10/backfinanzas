@@ -56,19 +56,18 @@ async function obtenerGastosMesActual(usuarioId) {
   }
 }
 
-async function obtenerGastosMesSeleccionado(usuarioId, mes) {
+async function obtenerGastossMesSeleccionado(usuarioId, mes) {
   try {
-    const inicioMes = new Date(new Date().getFullYear(), mes - 1, 1);
-    const finMes = new Date(new Date().getFullYear(), mes, 0, 23, 59, 59);
-    const usuario = await UsuarioModelo.findById(usuarioId);
-
-    if (!usuario) {
-      return { mensaje: "Usuario no encontrado" };
-    }
-    const gastos = await GastoModelo.find({
-      usuario,
-      fecha: { $gte: inicioMes, $lte: finMes },
-    }).sort({ fecha: -1 });
+    // mes debe venir como string 'MM', ejemplo '01' para enero
+    const year = new Date().getFullYear();
+    const mesStr = String(mes).padStart(2, '0');
+    // Buscar gastos donde fecha empiece con 'YYYY-MM'
+    const gastos = await GastoModelo
+      .find({
+        usuario: usuarioId,
+        fecha: { $regex: `^${year}-${mesStr}` },
+      })
+      .sort({ fecha: -1 });
     return { gastos };
   } catch (error) {
     return { mensaje: "Error al obtener los gastos", error: error.message };
@@ -111,5 +110,5 @@ module.exports = {
   obtenerGastosMesActual,
   actualizarGasto,
   eliminarGasto,
-  obtenerGastosMesSeleccionado,
+  obtenerGastossMesSeleccionado,
 };

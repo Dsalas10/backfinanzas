@@ -43,22 +43,24 @@ async function obtenerEventosMesActual(usuarioId) {
         fecha: { $gte: inicioMesStr, $lte: finMesStr },
       })
       .sort({ fecha: -1 });
-    return { mensaje: "Datos obtenitdos", eventos };
+    return { mensaje: "Datos obtenidos mes", eventos };
   } catch (error) {
     return { mensaje: "Error al obtener los eventos", error: error.message };
   }
 }
 async function obtenerEventosMesSeleccionado(usuarioId, mes) {
   try {
-    const inicioMes = new Date(new Date().getFullYear(), mes - 1, 1);
-    const finMes = new Date(new Date().getFullYear(), mes, 0, 23, 59, 59);
+    // mes debe venir como string 'MM', ejemplo '01' para enero
+    const year = new Date().getFullYear();
+    const mesStr = String(mes).padStart(2, '0');
+    // Buscar eventos donde fecha empiece con 'YYYY-MM'
     const eventos = await eventomodel
       .find({
         usuario: usuarioId,
-        fecha: { $gte: inicioMes, $lte: finMes },
+        fecha: { $regex: `^${year}-${mesStr}` },
       })
       .sort({ fecha: -1 });
-    return { eventos };
+    return { mensaje: "Datos obtenidos del mes seleccionado", eventos };
   } catch (error) {
     return { mensaje: "Error al obtener los eventos", error: error.message };
   }
@@ -80,9 +82,26 @@ async function eliminarEvento(usuarioId, eventoId) {
     return { mensaje: "Error al eliminar el evento", error: error.message };
   }
 }
+async function actualizarEvento(eventoId, usuarioId, nuevosDatos) {
+  try {
+    const evento = await eventomodel.findOne({
+      _id: eventoId,
+      usuario: usuarioId,
+    });
+    if (!evento) {
+      return { mensaje: "Evento no encontrado o no pertenece al usuario" };
+    }
+    evento.set(nuevosDatos);
+    await evento.save();
+    return { mensaje: "Evento actualizado exitosamente", evento };
+  } catch (error) {
+    return { mensaje: "Error al actualizar el evento", error: error.message };
+  }
+}
 module.exports = {
   crearEvento,
   obtenerEventosMesActual,
   obtenerEventosMesSeleccionado,
   eliminarEvento,
+  actualizarEvento,
 };

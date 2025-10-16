@@ -7,6 +7,7 @@ const {
   obtenerEventosMesActual,
   obtenerEventosMesSeleccionado,
   eliminarEvento,
+  actualizarEvento,
 } = require("../Controllers/controller.eventos");
 const reglasEvento = {
   fecha: [
@@ -65,14 +66,35 @@ router.get("/:usuarioId", async (req, res) => {
       .json({ mensaje: "Error al obtener los eventos", error: error.message });
   }
 });
-router.get("/mesSeleccionado/:usuarioId/:mes", async (req, res) => {
+router.get("/:usuarioId/:messeleccionado", async (req, res) => {
   try {
-    const { usuarioId, mes } = req.params;
+    const { usuarioId, messeleccionado } = req.params;
+    console.log("messeleccionado", messeleccionado);
+    if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ mensaje: "ID de usuario inválido" });
+    }
+    if (
+      !messeleccionado ||
+      isNaN(messeleccionado) ||
+      parseInt(messeleccionado) < 1 ||
+      parseInt(messeleccionado) > 12
+    ) {
+      return res.status(400).json({ mensaje: "Mes inválido" });
+    }
+
     const resultado = await obtenerEventosMesSeleccionado(
       usuarioId,
-      parseInt(mes)
+      parseInt(messeleccionado)
     );
-    return res.json(resultado);
+    if (!resultado) {
+      return res.status(404).json({ mensaje: resultado.mensaje });
+    }
+    if (resultado.error) {
+      return res.status(500).json({ mensaje: resultado.error });
+    }
+    return res
+      .status(200)
+      .json({ mensaje: resultado.mensaje, eventos: resultado.eventos });
   } catch (error) {
     return res
       .status(500)
@@ -90,13 +112,38 @@ router.delete("/eliminar", async (req, res) => {
       return res.status(500).json({ mensaje: resultado.error });
     }
 
-    return res
-      .status(200)
-      .json({ mensaje: resultado.mensaje });
+    return res.status(200).json({ mensaje: resultado.mensaje });
   } catch (error) {
     return res
       .status(500)
       .json({ mensaje: "Error al eliminar el evento", error: error.message });
   }
 });
+
+router.put(
+  "/actualizar/:eventoId",
+  validarCampos(reglasEvento),
+  async (req, res) => { 
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errores: errors.array() });
+    try {
+      const { eventoId } = req.params;
+      const { usuarioId, ...eventoActualizado } = req.body;
+      const resultado = await actualizarEvento(eventoId, usuarioId, eventoActualizado);
+      if (!resultado) {
+        return res.status(404).json({ mensaje: resultado.mensaje });
+      }
+      if (resultado.error) {
+        return res.status(500).json({ mensaje: resultado.error });
+      }
+      return res.status(200).json({ mensaje: resultado.mensaje, evento: resultado.evento });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ mensaje: "Error al actualizar el evento", error: error.message });
+    }
+  }
+);
+
 module.exports = router;
