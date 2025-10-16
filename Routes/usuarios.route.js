@@ -3,9 +3,11 @@ const router = express.Router();
 const {
   registrarUsuario,
   cambiarPassword,
-}=require("../Controllers/controller.usuario")
+} = require("../Controllers/controller.usuario");
 
 router.post("/registrar", async (req, res) => {
+  console.log("Solicitud de registro recibida:", req.body);
+
   try {
     const { nombre, email, password } = req.body;
     const resultado = await registrarUsuario(nombre, email, password);

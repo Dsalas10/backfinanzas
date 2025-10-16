@@ -47,17 +47,17 @@ async function recuperarPassword(email, nuevaPassword) {
   }
 }
 
-async function loginUsuario(nombre) {
+async function loginUsuario(nombre, password) {
   try {
     const usuario = await UsuarioModelo.findOne({ nombre });
     // console.log("Usuario encontrado:", usuario);
     if (!usuario) {
       throw new Error("Nombre o contraseña incorrectos");
     }
-    // const esValido = await usuario.compararPassword(password);
-    // if (!esValido) {
-    //   throw new Error("Nombre o contraseña incorrectos");
-    // }
+    const esValido = await usuario.compararPassword(password);
+    if (!esValido) {
+      throw new Error("Nombre o contraseña incorrectos");
+    }
     return { data: usuario, mensaje: "Login Exitoso" };
   } catch (error) {
     throw new Error('Error al iniciar sesión2: ' + error.message);
