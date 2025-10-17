@@ -12,7 +12,7 @@ router.post("/login", async (req, res) => {
     }
     const nombre=username
     const resultado = await loginUsuario(nombre, password);
-    
+
     if(resultado.error){
       return res.status(400).json({error:resultado.error})
     }

@@ -58,7 +58,7 @@ async function loginUsuario(nombre, password) {
     if (!esValido) {
       throw new Error("Nombre o contraseña incorrectos");
     }
-    return { data: usuario, mensaje: "Login Exitoso" };
+    return { usuario};
   } catch (error) {
     throw new Error('Error al iniciar sesión2: ' + error.message);
   }

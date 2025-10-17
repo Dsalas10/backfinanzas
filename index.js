@@ -4,28 +4,19 @@ require("./DataBase/DB");
 const express = require("express");
 const cors = require("cors");
 
-const prestamosRouter = require("./Routes/prestamos.route");
-const loginRouter = require("./Routes/Login.route");
-
 const app = express();
 const PORT = process.env.PORT || 5000;
-const allowedOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(",")
-  : []; // E.g., "origin1,origin2"
 
-// Middlewares
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("No permitido por CORS"));
-      }
-    },
+    origin:
+      "https://gestorfinanzas-dsalas10-daniels-projects-e5cb67ed.vercel.app",
   })
-);
+); // Origen específico de tu frontend
 app.use(express.json());
+
+const prestamosRouter = require("./Routes/prestamos.route");
+const loginRouter = require("./Routes/Login.route");
 
 // Importa la conexión a la base de datos
 
