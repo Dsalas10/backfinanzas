@@ -2,20 +2,19 @@ const GastoModelo = require("../Models/model.gastos");
 const UsuarioModelo = require("../Models/model.user");
 
 // Crear un nuevo gasto
-async function crearGasto(fecha, concepto, monto, usuarioId) {
+async function crearGasto(fecha, concepto, monto,detalle, usuarioId) {
   try {
     const usuario = await UsuarioModelo.findById(usuarioId);
     if (!usuario) {
       return { mensaje: "Usuario no encontrado" };
     }
-    const nuevoGasto = new GastoModelo({ fecha, concepto, monto, usuario });
+    const nuevoGasto = new GastoModelo({ fecha, concepto, monto, detalle,usuario });
     await nuevoGasto.save();
     return nuevoGasto;
   } catch (error) {
     return { mensaje: "Error al crear el gasto", error: error.message };
   }
 }
-
 
 // Obtener todos los gastos de un usuario del mes actual
 async function obtenerGastosMesActual(usuarioId) {
@@ -60,14 +59,12 @@ async function obtenerGastossMesSeleccionado(usuarioId, mes) {
   try {
     // mes debe venir como string 'MM', ejemplo '01' para enero
     const year = new Date().getFullYear();
-    const mesStr = String(mes).padStart(2, '0');
+    const mesStr = String(mes).padStart(2, "0");
     // Buscar gastos donde fecha empiece con 'YYYY-MM'
-    const gastos = await GastoModelo
-      .find({
-        usuario: usuarioId,
-        fecha: { $regex: `^${year}-${mesStr}` },
-      })
-      .sort({ fecha: -1 });
+    const gastos = await GastoModelo.find({
+      usuario: usuarioId,
+      fecha: { $regex: `^${year}-${mesStr}` },
+    }).sort({ fecha: -1 });
     return { gastos };
   } catch (error) {
     return { mensaje: "Error al obtener los gastos", error: error.message };
@@ -75,32 +72,39 @@ async function obtenerGastossMesSeleccionado(usuarioId, mes) {
 }
 
 // Actualizar un gasto
-async function actualizarGasto(gastoId, datosActualizados) {
+async function actualizarGasto(gastoId, usuarioId, datosActualizados) {
   try {
-    const gastoActualizado = await Gastos.findByIdAndUpdate(
-      gastoId,
-      datosActualizados,
-      { new: true }
-    );
+    const gasto = await GastoModelo.findOne({
+      _id: gastoId,
+      usuario: usuarioId,
+    });
+    if (!gasto) {
+      return { mensaje: "Gasto no encontrado o no pertenece al usuario" };
+    }
+    gasto.set(datosActualizados);
+    const gastoActualizado = await gasto.save();
     return {
-      mensaje: "Gasto actualizado exitosamente",
+      mensaje: "Gasto actualizado exitosamente en la BD",
       gasto: gastoActualizado,
     };
   } catch (error) {
-    return { mensaje: "Error al actualizar el gasto", error: error.message };
+    return { mensaje: "Error al actualizar el gasto en la BD", error: error.message };
   }
 }
 
 // Eliminar un gasto
-async function eliminarGasto(usuarioId,gastoId) {
+async function eliminarGasto(usuarioId, gastoId) {
   try {
-    const gasto=await GastoModelo.findOne({ _id: gastoId, usuario: usuarioId });
-    if(!gasto){
-        return { mensaje: "Gasto no encontrado o no pertenece al usuario" };
+    const gasto = await GastoModelo.findOne({
+      _id: gastoId,
+      usuario: usuarioId,
+    });
+    if (!gasto) {
+      return { mensaje: "Gasto no encontrado o no pertenece al usuario" };
     }
     await GastoModelo.deleteOne({ _id: gastoId });
     return { mensaje: "Gasto eliminado exitosamente" };
-    } catch (error) {
+  } catch (error) {
     return { mensaje: "Error al eliminar el gasto", error: error.message };
   }
 }

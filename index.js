@@ -9,18 +9,20 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin:
+    origin:[
       "https://gestorfinanzas-dsalas10-daniels-projects-e5cb67ed.vercel.app",
+       "http://localhost:5173" 
+    ]
   })
 ); // Origen específico de tu frontend
 app.use(express.json());
 
-const prestamosRouter = require("./Routes/prestamos.route");
+const ingresoExtraRouter = require("./Routes/IngresoExtra.route");
 const loginRouter = require("./Routes/Login.route");
 
 // Importa la conexión a la base de datos
 
-app.use("/api/prestamo", prestamosRouter);
+app.use("/api/ingresoextra", ingresoExtraRouter);
 app.use("/api/", require("./Routes/gastos.route"));
 app.use("/api", loginRouter);
 app.use("/api/usuarios", require("./Routes/usuarios.route"));

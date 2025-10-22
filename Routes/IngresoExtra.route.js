@@ -3,11 +3,11 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const validarCampos = require("../MiddleWares/ValidarCampos");
 const {
-  crearPrestamo,
-  obtenerPrestamosMesActual,
-  eliminarPrestamo,
-  obtenerPrestamosMesSeleccionado
-} = require("../Controllers/controller.prestamos");
+  crearIngresoExtra,
+  obtenerIngresosExtrasMesActual,
+  eliminarIngresoExtra,
+  obtenerIngresoExtraMesSeleccionado
+} = require("../Controllers/controller.IngresoExtra");
 
 const reglasPrestamo = {
   fecha: [
@@ -20,16 +20,16 @@ const reglasPrestamo = {
   monto: [
     body("monto")
       .notEmpty()
-      .withMessage("Monto de venta obligatorio")
+      .withMessage("Monto obligatorio")
       .isNumeric()
       .withMessage("Monto de venta debe ser un número"),
   ],
-  interes: [
-    body("interes")
+  concepto: [
+    body("concepto")
       .notEmpty()
-      .withMessage("interes obligatorio")
-      .isNumeric()
-      .withMessage("interes debe ser un número"),
+      .withMessage("concepto obligatorio")
+      .isString()
+      .withMessage("concepto debe ser un número"),
   ],
 };
 router.post("/nuevo", validarCampos(reglasPrestamo), async (req, res) => {
@@ -38,58 +38,57 @@ router.post("/nuevo", validarCampos(reglasPrestamo), async (req, res) => {
     return res.status(400).json({ errores: errors.array() });
   }
   try {
-    const datoPrestamo = req.body;
-    const resultado = await crearPrestamo(datoPrestamo);
+    const datos = req.body;
+    const resultado = await crearIngresoExtra(datos);
     if (resultado.error) {
       res
         .status(500)
         .json({
-          mensaje: "Error al registrar el prestamo",
+          mensaje: "Error al registrar el Ingreso Extra",
           error: resultado.error,
         });
     }
     res
       .status(201)
-      .json({ mensaje: "Prestamo Creado Exictosamente", prestamo: resultado.nuevoPrestamo });
+      .json({ mensaje: "Ingreso Extra Creado Exictosamente", ingresoExtra: resultado.nuevoIngresoExtra });
   } catch (error) {
     res
       .status(500)
-      .json({ mensaje: "Error al crear el prestamo", error: error.message });
+      .json({ mensaje: "Error al crear el Ingreso Extra", error: error.message });
   }
 });
 
 router.delete("/eliminar", async (req, res) => {
-  const{usuarioId,prestamoId}=req.body
-  console.log("date",req.body)
+  const{usuarioId,ingresoExtraId}=req.body
   if (!usuarioId) {
     return res.status(400).json({ mensaje: 'Falta el usuarioId para validar la eliminación' });
   }
   try {
-    const resultado = await eliminarPrestamo(usuarioId, prestamoId);
+    const resultado = await eliminarIngresoExtra(usuarioId, ingresoExtraId);
     if (!resultado) {
       return res.status(404).json({ mensaje: resultado.mensaje });
     }
     return res.status(200).json({ mensaje: resultado.mensaje });
   } catch (error) {
-    return res.status(500).json({ mensaje: "Error al eliminar el gasto", error: error.message });
+    return res.status(500).json({ mensaje: "Error al eliminar el Ingreso Extra", error: error.message });
   }
 });
 
 
-//traer los prstamos del mes actual
+//traer los Ingresos extras del mes actual
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
     if(!userId.match(/^[0-9a-fA-F]{24}$/)){
       return res.status(400).json({ mensaje: "ID de usuario inválido" });
     }
-    const resultado = await obtenerPrestamosMesActual(userId);
+    const resultado = await obtenerIngresosExtrasMesActual(userId);
     if (resultado.error) {
       return res.status(500).json({ mensaje: resultado.mensaje, error: resultado.error });
     }
-    return res.status(200).json({ mensaje: "datos encontrados",  prestamos:resultado.prestamo });
+    return res.status(200).json({ mensaje:"Datos encontrados", ingresosExtras:resultado.ingresoExtra });
   } catch (error) {
-    return res.status(500).json({ mensaje: "Error al obtener los prestamos", error: error.message });
+    return res.status(500).json({ mensaje: "Error al obtener los Ingresos Extras", error: error.message });
   }
 });
 
@@ -99,15 +98,15 @@ router.get("/:userId/:meseleccionado", async (req, res) => {
     if(!userId.match(/^[0-9a-fA-F]{24}$/)){
       return res.status(400).json({ mensaje: "ID de usuario inválido" });
     }
-    const resultado = await obtenerPrestamosMesSeleccionado(
+    const resultado = await obtenerIngresoExtraMesSeleccionado(
       userId,
       parseInt(meseleccionado)
     );
-    return res.json(resultado);
+    return res.json({mensaje:"Obteniendo datos del mes selecionado de ingreso Extra ", resultado:resultado.ingresoExtra });
   } catch (error) {
     return res
       .status(500)
-      .json({ mensaje: "Error al obtener los prestamos", error: error.message });
+      .json({ mensaje: "Error al obtener los Ingresos Extras", error: error.message });
   }
 });
 
