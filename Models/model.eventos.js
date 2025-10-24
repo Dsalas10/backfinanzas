@@ -13,10 +13,9 @@ const eventoSchema = new Schema({
   pagoEfectivo: { type: Number, default: 0 },
   ventaTotalGeneral: { type: Number, default: 0 },
   propina: { type: Number, default: 0 },
-  gananciaPorcentaje: { type: Number, default: 0 },
   gananciaGeneral: { type: Number, default: 0 },
   porcentaje: { type: Number, default: 0 },
-  pagafija:{type:Number,defaulta:0},
+  paga:{type:Number,defaulta:0},
   usuario: { type: Schema.Types.ObjectId, ref: "Usuario", required: true }, // referencia al usuario
 });
 
