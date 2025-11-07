@@ -69,7 +69,6 @@ router.get("/:usuarioId", async (req, res) => {
 router.get("/:usuarioId/:messeleccionado", async (req, res) => {
   try {
     const { usuarioId, messeleccionado } = req.params;
-    console.log("messeleccionado", messeleccionado);
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({ mensaje: "ID de usuario inválido" });
     }
@@ -119,6 +118,8 @@ router.delete("/eliminar", async (req, res) => {
       .json({ mensaje: "Error al eliminar el evento", error: error.message });
   }
 });
+
+
 
 router.put(
   "/actualizar/:eventoId",

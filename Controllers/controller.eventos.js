@@ -17,30 +17,15 @@ async function crearEvento(datosEvento) {
 
 async function obtenerEventosMesActual(usuarioId) {
   try {
-    const inicioMes = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      1
-    );
-    const finMes = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      0,
-      23,
-      59,
-      59
-    );
-    function formatDateToString(date) {
-      return date.toISOString().split("T")[0];
-    }
-    const inicioMesStr = formatDateToString(inicioMes);
-    const finMesStr = formatDateToString(finMes);
-
+    // Buscar por prefijo 'YYYY-MM' (asumiendo fecha guardada como 'YYYY-MM-DD' string)
+    const now = new Date();
+    const year = now.getFullYear();
+    const monthStr = String(now.getMonth() + 1).padStart(2, "0");
 
     const eventos = await eventomodel
       .find({
         usuario: usuarioId,
-        fecha: { $gte: inicioMesStr, $lte: finMesStr },
+        fecha: { $regex: `^${year}-${monthStr}` },
       })
       .sort({ fecha: -1 });
     return { mensaje: "Datos obtenidos mes", eventos };
@@ -65,6 +50,7 @@ async function obtenerEventosMesSeleccionado(usuarioId, mes) {
     return { mensaje: "Error al obtener los eventos", error: error.message };
   }
 }
+
 async function eliminarEvento(usuarioId, eventoId) {
   try {
     const evento = await eventomodel.findOne({

@@ -27,6 +27,7 @@ app.use("/api/", require("./Routes/gastos.route"));
 app.use("/api", loginRouter);
 app.use("/api/usuarios", require("./Routes/usuarios.route"));
 app.use("/api/eventos", require("./Routes/eventos.route"));
+app.use("/api/resumen", require("./Routes/resumen.route"));
 
 // Ruta de prueba
 

@@ -64,4 +64,11 @@ Accept: application/json
 ### Obtener eventos de un mes seleccionado para un usuario
 GET http://localhost:5000/api/eventos/mes/68bf799928ea61737b894518/09
 Accept: application/json
+ 
+### Resumen mes anterior
+GET http://localhost:5000/api/resumen/mes-anterior/68bf799928ea61737b894518
+Accept: application/json
 
+### Resumen mes actual
+GET http://localhost:5000/api/resumen/mes-actual/68bf799928ea61737b894518
+Accept: application/json
