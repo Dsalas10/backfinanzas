@@ -9,6 +9,7 @@ const {
   eliminarEvento,
   actualizarEvento,
 } = require("../Controllers/controller.eventos");
+const auth = require("../MiddleWares/auth");
 const reglasEvento = {
   fecha: [
     body("fecha")
@@ -25,7 +26,9 @@ const reglasEvento = {
       .withMessage("Monto de venta debe ser un número"),
   ],
 };
-router.post("/nuevoEvento", validarCampos(reglasEvento), async (req, res) => {
+
+
+router.post("/nuevoEvento", auth, validarCampos(reglasEvento), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errores: errors.array() });
@@ -43,7 +46,7 @@ router.post("/nuevoEvento", validarCampos(reglasEvento), async (req, res) => {
 });
 
 //traer eventos del mes actual con el id del usaario
-router.get("/:usuarioId", async (req, res) => {
+router.get("/:usuarioId",auth, async (req, res) => {
   try {
     const { usuarioId } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -66,7 +69,7 @@ router.get("/:usuarioId", async (req, res) => {
       .json({ mensaje: "Error al obtener los eventos", error: error.message });
   }
 });
-router.get("/:usuarioId/:messeleccionado", async (req, res) => {
+router.get("/:usuarioId/:messeleccionado",auth, async (req, res) => {
   try {
     const { usuarioId, messeleccionado } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -100,7 +103,7 @@ router.get("/:usuarioId/:messeleccionado", async (req, res) => {
       .json({ mensaje: "Error al obtener los eventos", error: error.message });
   }
 });
-router.delete("/eliminar", async (req, res) => {
+router.delete("/eliminar", auth,async (req, res) => {
   try {
     const { usuarioId, eventoId } = req.body;
     const resultado = await eliminarEvento(usuarioId, eventoId);
@@ -122,7 +125,7 @@ router.delete("/eliminar", async (req, res) => {
 
 
 router.put(
-  "/actualizar/:eventoId",
+  "/actualizar/:eventoId", auth,
   validarCampos(reglasEvento),
   async (req, res) => { 
     const errors = validationResult(req);

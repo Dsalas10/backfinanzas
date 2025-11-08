@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const validarCampos = require("../MiddleWares/ValidarCampos");
+const auth = require("../MiddleWares/auth");
 const {
   crearIngresoExtra,
   obtenerIngresosExtrasMesActual,
@@ -32,7 +33,7 @@ const reglasPrestamo = {
       .withMessage("concepto debe ser un número"),
   ],
 };
-router.post("/nuevo", validarCampos(reglasPrestamo), async (req, res) => {
+router.post("/nuevo", auth, validarCampos(reglasPrestamo), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errores: errors.array() });
@@ -58,7 +59,7 @@ router.post("/nuevo", validarCampos(reglasPrestamo), async (req, res) => {
   }
 });
 
-router.delete("/eliminar", async (req, res) => {
+router.delete("/eliminar", auth, async (req, res) => {
   const{usuarioId,ingresoExtraId}=req.body
   if (!usuarioId) {
     return res.status(400).json({ mensaje: 'Falta el usuarioId para validar la eliminación' });
@@ -76,7 +77,7 @@ router.delete("/eliminar", async (req, res) => {
 
 
 //traer los Ingresos extras del mes actual
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", auth, async (req, res) => {
   const { userId } = req.params;
   try {
     if(!userId.match(/^[0-9a-fA-F]{24}$/)){
@@ -92,7 +93,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-router.get("/:userId/:meseleccionado", async (req, res) => {
+router.get("/:userId/:meseleccionado", auth, async (req, res) => {
   const { userId, meseleccionado } = req.params;
   try {
     if(!userId.match(/^[0-9a-fA-F]{24}$/)){

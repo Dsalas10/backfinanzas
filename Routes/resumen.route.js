@@ -7,7 +7,9 @@ const {
   totalGeneradoMesActual,
 } = require("../Controllers/controller.resumen");
 
-router.get("/mes-anterior/:usuarioId", async (req, res) => {
+const auth = require("../MiddleWares/auth");
+
+router.get("/mes-anterior/:usuarioId", auth, async (req, res) => {
   try {
     const { usuarioId } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -31,7 +33,7 @@ router.get("/mes-anterior/:usuarioId", async (req, res) => {
   }
 });
 
-router.get("/mes-actual/:usuarioId", async (req, res) => {
+router.get("/mes-actual/:usuarioId", auth, async (req, res) => {
   try {
     const { usuarioId } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -55,7 +57,7 @@ router.get("/mes-actual/:usuarioId", async (req, res) => {
   }
 });
 
-router.get("/mes-seleccionado/:usuarioId/:mes", async (req, res) => {
+router.get("/mes-seleccionado/:usuarioId/:mes", auth, async (req, res) => {
   try {
     const { usuarioId, mes } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -85,7 +87,7 @@ router.get("/mes-seleccionado/:usuarioId/:mes", async (req, res) => {
   }
 });
 
-router.get("/total-generado/:usuarioId", async (req, res) => {
+router.get("/total-generado/:usuarioId", auth, async (req, res) => {
   try {
     const { usuarioId } = req.params;
     if (!usuarioId.match(/^[0-9a-fA-F]{24}$/)) {

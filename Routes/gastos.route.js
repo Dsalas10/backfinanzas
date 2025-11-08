@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const validarCampos = require("../MiddleWares/ValidarCampos");
+const auth = require("../MiddleWares/auth");
 const {
   crearGasto,
   obtenerGastosMesActual,
@@ -24,12 +25,12 @@ const reglasGasto = {
       .withMessage("Monto obligatorio")
       .isFloat({ gt: 0 }),
   ],
-  concepto: [body("concepto").notEmpty().withMessage("Concepto obligatorio")],
+  // concepto: [body("concepto").notEmpty().withMessage("Concepto obligatorio")],
   usuarioId: [body("usuarioId").notEmpty().isMongoId()],
 };
 
 //gastos del mes actual
-router.get("/gastos/:userId", async (req, res) => {
+router.get("/gastos/:userId", auth, async (req, res) => {
   const { userId } = req.params;
   try {
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -54,7 +55,7 @@ router.get("/gastos/:userId", async (req, res) => {
   }
 });
 
-router.post("/nuevoGasto", validarCampos(reglasGasto), async (req, res) => {
+router.post("/nuevoGasto", auth, validarCampos(reglasGasto), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errores: errors.array() });
@@ -78,7 +79,7 @@ router.post("/nuevoGasto", validarCampos(reglasGasto), async (req, res) => {
   }
 });
 
-router.delete("/gastos/eliminar", async (req, res) => {
+router.delete("/gastos/eliminar", auth, async (req, res) => {
   const { usuarioId, gastoId } = req.body;
   if (!usuarioId) {
     return res
@@ -98,7 +99,7 @@ router.delete("/gastos/eliminar", async (req, res) => {
   }
 });
 
-router.get("/gastos/:userId/:meseleccionado", async (req, res) => {
+router.get("/gastos/:userId/:meseleccionado", auth, async (req, res) => {
   const { userId, meseleccionado } = req.params;
   try {
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -116,7 +117,7 @@ router.get("/gastos/:userId/:meseleccionado", async (req, res) => {
   }
 });
 
-router.put("/gastos/editar/:gastoId",validarCampos(reglasGasto), async (req, res) => {
+router.put("/gastos/editar/:gastoId", auth,validarCampos(reglasGasto), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errores: errors.array() });

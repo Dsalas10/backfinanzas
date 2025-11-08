@@ -1,5 +1,7 @@
 const UsuarioModelo = require("../Models/model.user");
 
+const jwt = require("jsonwebtoken");
+const SECRET = process.env.JWT_SECRET || "supersecreto";
 async function registrarUsuario(nombre, email, password) {
   try {
     const existe = await UsuarioModelo.findOne({ email });
@@ -47,10 +49,10 @@ async function recuperarPassword(email, nuevaPassword) {
   }
 }
 
+
 async function loginUsuario(nombre, password) {
   try {
     const usuario = await UsuarioModelo.findOne({ nombre });
-    // console.log("Usuario encontrado:", usuario);
     if (!usuario) {
       throw new Error("Nombre o contraseña incorrectos");
     }
@@ -58,7 +60,17 @@ async function loginUsuario(nombre, password) {
     if (!esValido) {
       throw new Error("Nombre o contraseña incorrectos");
     }
-    return { usuario};
+    // Generar token JWT con _id y nombre
+    const payload = { _id: usuario._id, nombre: usuario.nombre };
+    const token = jwt.sign(payload, SECRET, { expiresIn: "7d" });
+    // Devuelve el usuario completo, sin la contraseña
+    const usuarioSinPassword = {
+      _id: usuario._id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      // agrega otros campos si los tienes
+    };
+    return { token, usuario: usuarioSinPassword };
   } catch (error) {
     throw new Error('Error al iniciar sesión2: ' + error.message);
   }
